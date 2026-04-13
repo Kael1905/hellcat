@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src * 'unsafe-inline' 'unsafe-eval' wss://*.firebaseio.com https://*.firebaseio.com https://*.googleapis.com https://www.gstatic.com;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CYBER-SNAKE v6.0 | Kael Arcade</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@400&display=swap"
+        rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <style>
+        :root {
+            --neon-red: #ff0000;
+            --bg-dark: #050000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-top: 50px;
+        }
+
+        .game-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 420px;
+        }
+
+        h1 {
+            font-family: 'Orbitron';
+            letter-spacing: 8px;
+            text-shadow: 0 0 15px var(--neon-red);
+            margin-bottom: 15px;
+            font-size: 2.2rem;
+        }
+
+        #gameCanvas {
+            border: 2px solid var(--neon-red);
+            background: #000;
+            box-shadow: 0 0 25px rgba(255, 0, 0, 0.2);
+            width: 360px;
+            height: 360px;
+        }
+
+        /* MOBİL KONTROLLER */
+        .controls {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            gap: 8px;
+        }
+
+        .d-row {
+            display: flex;
+            gap: 60px;
+        }
+
+        .d-btn {
+            width: 65px;
+            height: 65px;
+            border: 2px solid var(--neon-red);
+            color: var(--neon-red);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 12px;
+            font-size: 1.4rem;
+            background: rgba(255, 0, 0, 0.05);
+            cursor: pointer;
+        }
+
+        .d-btn:active {
+            background: var(--neon-red);
+            color: #000;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                display: flex;
+            }
+
+            #gameCanvas,
+            #leaderboard-container {
+                width: 300px;
+            }
+
+            #gameCanvas {
+                height: 300px;
+            }
+
+            h1 {
+                font-size: 1.6rem;
+            }
+        }
+
+        #nick-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(5, 0, 0, 0.98);
+            border: 2px solid var(--neon-red);
+            padding: 30px;
+            z-index: 3000;
+            text-align: center;
+            box-shadow: 0 0 40px var(--neon-red);
+            width: 320px;
+        }
+
+        #nick-input {
+            background: #000;
+            border: 1px solid var(--neon-red);
+            color: #fff;
+            padding: 12px;
+            width: 100%;
+            text-align: center;
+            outline: none;
+            font-family: 'JetBrains Mono';
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        #nick-submit {
+            background: var(--neon-red);
+            color: #000;
+            border: none;
+            padding: 12px;
+            font-weight: 900;
+            cursor: pointer;
+            width: 100%;
+            font-family: 'Orbitron';
+            letter-spacing: 2px;
+            transition: 0.3s;
+        }
+
+        #nick-submit:hover {
+            box-shadow: 0 0 20px var(--neon-red);
+        }
+
+        #leaderboard-container {
+            margin-top: 25px;
+            width: 360px;
+            border: 1px solid var(--neon-red);
+            background: rgba(255, 0, 0, 0.05);
+        }
+
+        .lb-header {
+            background: var(--neon-red);
+            color: #000;
+            font-weight: 900;
+            font-size: 0.7rem;
+            padding: 5px;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        #lb-list {
+            padding: 10px;
+            font-size: 0.75rem;
+            color: #0f0;
+            line-height: 1.6;
+        }
+
+        .lb-row {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed rgba(255, 0, 0, 0.1);
+            margin-bottom: 4px;
+        }
+
+        .restart-btn {
+            margin: 20px 0 40px;
+            background: none;
+            border: 1px solid var(--neon-red);
+            color: var(--neon-red);
+            padding: 10px 25px;
+            font-family: 'Orbitron';
+            cursor: pointer;
+            letter-spacing: 2px;
+            font-size: 0.7rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="position:absolute;top:20px;left:20px"><a href="../index.html"
+            style="color:#fff;text-decoration:none;border:1px solid red;padding:5px 10px;font-size:0.6rem">[ ESC ]
+            EXIT</a></div>
+
+    <div class="game-wrapper">
+        <h1>CYBER SNAKE</h1>
+        <div style="display:flex; gap:15px; margin-bottom:15px;">
+            <div style="border:1px solid red; padding:5px 15px; color:red; font-size:0.8rem;">SCORE: <span
+                    id="sVal">0</span></div>
+            <div style="border:1px solid red; padding:5px 15px; color:red; font-size:0.8rem;">BEST: <span
+                    id="hVal">0</span></div>
+        </div>
+
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+        <div class="controls">
+            <div class="d-btn" id="u">▲</div>
+            <div class="d-row">
+                <div class="d-btn" id="l">◀</div>
+                <div class="d-btn" id="r">▶</div>
+            </div>
+            <div class="d-btn" id="d">▼</div>
+        </div>
+
+        <div id="leaderboard-container">
+            <div class="lb-header">TOP_10_GLOBAL_AGENTS</div>
+            <div id="lb-list">GRID_LOADING...</div>
+        </div>
+
+        <div id="nick-modal">
+            <h2 id="mScore" style="color:red; margin-bottom:15px; font-size:1rem; font-family:'Orbitron'">FINAL SCORE: 0
+            </h2>
+            <input type="text" id="nick-input" placeholder="ENTER NICKNAME" maxlength="10">
+            <button id="nick-submit">UPLOAD_DATA</button>
+        </div>
+
+        <button class="restart-btn" onclick="location.reload()">RESTART_CORE</button>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+            authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+            databaseURL: import.meta.env.VITE_FIREBASE_DB_URL,
+            projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+            storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+            messagingSenderId: import.meta.env.VITE_FIREBASE_SENDER_ID,
+            appId: import.meta.env.VITE_FIREBASE_APP_ID
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const scoreRef = db.ref('high_scores');
+
+        // LEADERBOARD ÇEKİMİ
+        scoreRef.orderByChild('score').limitToLast(10).on('value', (snapshot) => {
+            const list = document.getElementById('lb-list');
+            list.innerHTML = "";
+            let scores = [];
+            snapshot.forEach((child) => { scores.push(child.val()); });
+            scores.reverse().forEach((data, index) => {
+                list.innerHTML += `
+                <div class="lb-row">
+                    <span>${index + 1}. <span style="color: #ff0;">${data.name || "ANONYMOUS"}</span></span>
+                    <span style="color: var(--neon-red); font-weight: bold;">${data.score || 0}</span>
+                </div>`;
+            });
+            if (scores.length === 0) list.innerHTML = "NO_RECORDS_FOUND";
+        });
+
+        window.onload = () => {
+            const canvas = document.getElementById("gameCanvas");
+            const ctx = canvas.getContext("2d");
+            const box = 20;
+
+            let score = 0;
+            let highScore = localStorage.getItem("nandoScore") || 0;
+            document.getElementById("hVal").innerText = highScore;
+
+            let snake = [{ x: 10 * box, y: 10 * box }];
+            let food = { x: 5 * box, y: 5 * box };
+            let dir = "";
+            let active = false;
+            let gOver = false;
+            let scoreSent = false;
+
+            // --- OYUNU SIFIRLAMA ---
+            const restartGame = () => {
+                snake = [{ x: 10 * box, y: 10 * box }];
+                food = { x: 5 * box, y: 5 * box };
+                score = 0;
+                dir = "";
+                active = false;
+                gOver = false;
+                scoreSent = false;
+                document.getElementById("sVal").innerText = 0;
+                document.getElementById('nick-modal').style.display = 'none';
+                document.getElementById('nick-submit').innerText = "UPLOAD_DATA";
+                ctx.fillStyle = "black";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            };
+
+
+            const input = (val) => {
+                let key = "";
+                if (val instanceof KeyboardEvent) {
+                    if (val.code === 'Space' && gOver) {
+                        restartGame();
+                        return;
+                    }
+                    key = val.code;
+                } else {
+                    key = val;
+                }
+
+                if (gOver) return;
+                if (!active) active = true;
+
+                if ((key === "ArrowLeft" || key === "LEFT") && dir !== "RIGHT") dir = "LEFT";
+                if ((key === "ArrowUp" || key === "UP") && dir !== "DOWN") dir = "UP";
+                if ((key === "ArrowRight" || key === "RIGHT") && dir !== "LEFT") dir = "RIGHT";
+                if ((key === "ArrowDown" || key === "DOWN") && dir !== "UP") dir = "DOWN";
+            };
+
+
+            window.addEventListener('keydown', (e) => {
+                if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) e.preventDefault();
+                if (e.keyCode == 27) window.location.href = "../index.html";
+                input(e);
+            });
+
+
+            const setupBtn = (id, d) => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.onclick = () => input(d);
+                    el.ontouchstart = (e) => { e.preventDefault(); input(d); };
+                }
+            };
+            setupBtn('u', 'UP'); setupBtn('d', 'DOWN'); setupBtn('l', 'LEFT'); setupBtn('r', 'RIGHT');
+
+            function draw() {
+                if (gOver) return;
+                ctx.fillStyle = "black"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                if (!active) {
+                    ctx.fillStyle = "#0ff"; ctx.textAlign = "center"; ctx.font = "14px Orbitron";
+                    ctx.fillText("SYSTEM READY", 200, 180);
+                    ctx.font = "10px JetBrains Mono";
+                    ctx.fillText("USE ARROWS OR SPACE TO START", 200, 210);
+                    return;
+                }
+
+                ctx.fillStyle = "white"; ctx.fillRect(food.x, food.y, box, box);
+                snake.forEach((s, i) => { ctx.fillStyle = i == 0 ? "red" : "#444"; ctx.fillRect(s.x, s.y, box, box); });
+
+                let hX = snake[0].x; let hY = snake[0].y;
+                if (dir == "LEFT") hX -= box; if (dir == "UP") hY -= box; if (dir == "RIGHT") hX += box; if (dir == "DOWN") hY += box;
+
+                if (hX == food.x && hY == food.y) {
+                    score++; document.getElementById("sVal").innerText = score;
+                    food = { x: Math.floor(Math.random() * 19 + 1) * box, y: Math.floor(Math.random() * 19 + 1) * box };
+                } else { snake.pop(); }
+
+                let nH = { x: hX, y: hY };
+                if (hX < 0 || hX >= 400 || hY < 0 || hY >= 400 || snake.some(s => s.x == nH.x && s.y == nH.y)) {
+                    gOver = true; if (score > highScore) localStorage.setItem("nandoScore", score);
+                    ctx.fillStyle = "rgba(0,0,0,0.85)"; ctx.fillRect(0, 0, 400, 400);
+                    ctx.fillStyle = "red"; ctx.font = "24px Orbitron"; ctx.textAlign = "center"; ctx.fillText("CRITICAL FAILURE", 200, 180);
+                    ctx.font = "12px Orbitron"; ctx.fillText("PRESS [SPACE] TO RESTART", 200, 220);
+
+                    if (!scoreSent) {
+                        scoreSent = true;
+                        const modal = document.getElementById('nick-modal');
+                        document.getElementById('mScore').innerText = "SCORE: " + score;
+                        modal.style.display = 'block';
+                        const nIn = document.getElementById('nick-input');
+                        const nBtn = document.getElementById('nick-submit');
+                        nIn.focus();
+
+                        nBtn.onclick = () => {
+                            const n = nIn.value.trim().toUpperCase() || "GUEST";
+                            const curS = parseInt(score);
+                            const safeID = n.replace(/[.#$[\]]/g, "");
+                            const userRef = scoreRef.child(safeID);
+                            userRef.once('value', (s) => {
+                                const exist = s.val();
+                                if (!exist || curS > exist.score) {
+                                    userRef.set({ name: n, score: curS, ts: Date.now() });
+                                }
+                                nBtn.innerText = "DATA SAVED!";
+                                setTimeout(() => { modal.style.display = 'none'; }, 800);
+                            });
+                        };
+                        nIn.onkeypress = (e) => { if (e.key === 'Enter') nBtn.onclick(); };
+                    }
+                    return;
+                }
+                snake.unshift(nH);
+            }
+            setInterval(draw, 100);
+        };
+    </script>
+</body>
+
+</html>

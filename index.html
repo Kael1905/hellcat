@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src * 'unsafe-inline' 'unsafe-eval' wss://*.firebaseio.com https://*.firebaseio.com https://*.googleapis.com https://www.gstatic.com;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HELLCAT PORTAL</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@300&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <div class="ali-top-bar">
+        <div class="scrolling-content">
+            <span>[ SYSTEM OVERRIDE ] : İMAM ALİ'NİN DOĞUM GÜNÜ KUTLU OLSUN! 🌀</span>
+            <span>[ STATUS ] : BOYUTLAR ARASI KUTLAMA MODU AKTİF... 🚀</span>
+            <span>[ AD ] : BU SİTE BUGÜN ALİ'NİN ŞEREFİNE ÇALIŞIYOR! ⚡</span>
+            <span>[ INFO ] : C-137 BOYUTUNDAN SELAMLAR... 🛸</span>
+            <span>[ SYSTEM OVERRIDE ] : İMAM ALİ'NİN DOĞUM GÜNÜ KUTLU OLSUN! 🌀</span>
+        </div>
+    </div>
+
+    <div class="crt-overlay"></div>
+
+    <div class="side-panel left-top">
+        <div class="panel-header">TERMINAL_LOGS</div>
+        <div id="logs" class="panel-content" style="color: #0f0; height: 80px; overflow: hidden; font-size: 0.6rem;">
+        </div>
+    </div>
+
+    <div class="side-panel left-middle">
+        <div class="panel-header">SECURITY_FIREWALL</div>
+        <div id="security-live" class="panel-content"
+            style="font-family: 'JetBrains Mono'; font-size: 0.6rem; height: 90px; overflow: hidden;"></div>
+    </div>
+
+    <div class="side-panel left-bottom">
+        <div class="panel-header">BIOMETRIC DATA</div>
+        <div class="panel-content">
+            <p>ID: KAEL</p>
+            <p>LOC: SECTOR-C137</p>
+            <p>MEM: <span id="mem-usage" style="color: var(--neon-red);">48%</span></p>
+        </div>
+    </div>
+
+    <div class="side-panel top-right">
+        <div class="panel-header">RICK FM</div>
+        <div class="panel-content">
+            <div class="video-frame">
+                <iframe
+                    src="https://www.youtube.com/embed/MsVGXZr-5cc?list=PLnwLbAKgVu_BSu8zZhae8VsT6AlBp6ckT"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div class="side-panel right-bottom">
+        <div class="panel-header">GLOBAL CHAT 🛰️</div>
+        <div class="panel-content">
+            <div id="chat-display">INITIALIZING...</div>
+            <input type="text" id="user-name" placeholder="YOUR_NAME" maxlength="15">
+            <div class="chat-row">
+                <input type="text" id="chat-input" placeholder="Message..." maxlength="70">
+                <button id="chat-send">LOG</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-hub">
+        <div class="eyes-wrapper">
+            <div class="eye-container left-eye">
+                <div class="pupil"></div>
+            </div>
+            <div class="eye-container right-eye">
+                <div class="pupil"></div>
+            </div>
+        </div>
+        <h1 class="modern-logo">HELLCAT</h1>
+        <div style="color:var(--neon-red); letter-spacing:5px; font-size:0.8rem; margin-bottom:20px;">[
+            BIOMETRIC_PORTAL_v6.80 ]</div>
+        <div class="nav">
+            <a href="cybersnake.html" class="nav-item">ARCADE</a>
+            <a href="f1.html" class="nav-item" style="border-color: #ff3e3e;">DRIVE</a> <a href="javascript:void(0)"
+                onclick="openAbout()" class="nav-item">ABOUT</a>
+            <a href="javascript:void(0)" onclick="openProjects()" class="nav-item">PROJECTS</a>
+            <a href="#" class="nav-item">LABS</a>
+        </div>
+    </div>
+
+    <div id="about-modal" class="modal-overlay">
+        <div class="side-panel modal-content">
+            <div class="panel-header">SYSTEM_ADMIN_PROFILE <span onclick="closeAbout()"
+                    style="float:right; cursor:pointer;">[X]</span></div>
+            <div class="panel-content">
+                <h3 style="color: #00ff00; margin-bottom: 8px; font-size: 0.8rem;"># SYSTEM_ADMIN: KAEL 🦝</h3>
+                <p style="line-height: 1.4; margin-bottom: 10px; font-size: 0.75rem;"><span
+                        style="color: #ff3e3e; font-weight: bold;">[OS]:</span> Computer Engineering Student @
+                    Sector-C137. Currently overclocking skills in Java, Python, and Game Dev.</p>
+                <p style="line-height: 1.4; margin-bottom: 10px; font-size: 0.75rem;"><span
+                        style="color: #ff3e3e; font-weight: bold;">[MISSION]:</span> Building high-performance F1 Data
+                    Dashboards and experimental cyber-interfaces.</p>
+                <div
+                    style="display: flex; gap: 5px; margin-top: 10px; justify-content: center; border-top: 1px solid #222; padding-top: 10px;">
+                    <img src="https://img.shields.io/badge/python-3670A0?style=flat-square&logo=python&logoColor=ffdd54"
+                        height="15" />
+                    <img src="https://img.shields.io/badge/java-%23ED8B00.svg?style=flat-square&logo=openjdk&logoColor=white"
+                        height="15" />
+                    <img src="https://img.shields.io/badge/unity-%23000000.svg?style=flat-square&logo=unity&logoColor=white"
+                        height="15" />
+                </div>
+                <button class="nav-item" onclick="closeAbout()"
+                    style="margin-top: 20px; width: 100%; font-size: 0.6rem;">EXIT_PROFILE</button>
+            </div>
+        </div>
+    </div>
+    <div id="project-modal" class="modal-overlay">
+        <div class="side-panel modal-content">
+            <div class="panel-header">PROJECT_MANIFESTO <span onclick="closeModal()"
+                    style="float:right; cursor:pointer;">[X]</span></div>
+            <div class="panel-content">
+                <p style="line-height: 1.6; font-size: 0.8rem; margin-bottom: 15px;">I built this portal as a personal
+                    sandbox to experiment with code and cyber-aesthetics. It’s a <strong>living project</strong>, and in
+                    the spirit of open exchange, this core is licensed under <strong>CC BY 4.0</strong>. Feel free to
+                    explore and build upon it, just give credit! 🦝</p>
+                <p
+                    style="color: var(--neon-red); font-weight: bold; border-top: 1px dashed #444; padding-top: 10px; font-size: 0.75rem;">
+                    [!] Have a cool idea? <br>Don't hesitate to drop a message in the Guestbook! 🛰️</p>
+                <button class="nav-item" onclick="closeModal()"
+                    style="margin-top: 20px; width: 100%; font-size: 0.6rem;">CLOSE</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="portal-footer">
+        <p>© 2026 HELLCAT PORTAL // BY KAEL</p>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="index.js" type="module"></script>
+    <script type="module" src="/index.js"></script>
+</body>
+
+</html>
